@@ -1,3 +1,19 @@
+// This is a manifest file that'll be compiled into application.js, which will include all the files
+// listed below.
+//
+// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
+// or any plugin's vendor/assets/javascripts directory can be referenced here using a relative path.
+//
+// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+// compiled file.
+//
+// Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
+// about supported directives.
+//
+//= require jquery
+//= require jquery_ujs
+//= require_tree .
+
 $(function() {
   $('input').focus();
   $('input').keyup(function (e) {
@@ -37,7 +53,7 @@ $(function() {
   $('body').on('click', 'li a', function(event) {
     event.preventDefault();
     $('#player *').remove();
-    var song_uri = $(this).attr('id');
+    var song_id = $(this).attr('id');
     var template = Handlebars.compile($('#player-template').html());
     $('#player').append(template({spotify_uri: song_uri}))
   })
@@ -63,10 +79,10 @@ function showFirstFiveSongs(json) {
   $('div#results').append('<ul></ul>');
   for (i = 0; i < resultsToShow; i++) {
     // $('ul').append("<li>" + json.tracks.items[i].name + "</li>")
-    console.log(json.tracks.items[i].uri)
+    console.log(json.tracks.items[i])
     song = {artist: json.tracks.items[i].artists[0].name,
             title: json.tracks.items[i].name,
-            song_uri: json.tracks.items[i].uri}
+            song_uri: encodeURIComponent(json.tracks.items[i].id)}
     $('ul').append(template(song));
   }
 }
