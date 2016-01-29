@@ -10,9 +10,12 @@ $(function() {
       $('input').val(''); //Clear the input on escape
     }
   })
+
+
+
   var lastSearch = "";
   var idleCounter = 0;
-  window.setInterval(CheckIdleTime, 250);
+  window.setInterval(CheckIdleTime, 100);
   $('input').on('input', function() {
     idleCounter = 0;
   })
@@ -28,6 +31,16 @@ $(function() {
         .done(showFirstFiveSongs);
     }
   }
+
+
+
+  $('body').on('click', 'li a', function(event) {
+    event.preventDefault();
+    $('#player *').remove();
+    var song_uri = $(this).attr('id');
+    var template = Handlebars.compile($('#player-template').html());
+    $('#player').append(template({spotify_uri: song_uri}))
+  })
 })
 
 function trackSearch(query) {
@@ -45,13 +58,25 @@ function showFirstAlbumCover(json) {
 function showFirstFiveSongs(json) {
   removeResults();
   var resultsToShow = Math.min(json.tracks.items.length, 5);
+  var template = Handlebars.compile($('#song-template').html());
   var i
   $('div#results').append('<ul></ul>');
   for (i = 0; i < resultsToShow; i++) {
-    $('ul').append("<li>" + json.tracks.items[i].name + "</li>")
+    // $('ul').append("<li>" + json.tracks.items[i].name + "</li>")
+    console.log(json.tracks.items[i].uri)
+    song = {artist: json.tracks.items[i].artists[0].name,
+            title: json.tracks.items[i].name,
+            song_uri: json.tracks.items[i].uri}
+    $('ul').append(template(song));
   }
 }
 
 function removeResults() {
   $('#results *').remove();
+}
+
+function Song(artist, name, spotify_id) {
+  this.artist = artist;
+  this.name = name;
+  this.spotify_id = spotify_id;
 }
